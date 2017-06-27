@@ -36,7 +36,7 @@ ${STASM_BASE_DIR}/stasm/MOD_1/initasm.cpp
 )
 
 add_library(opencv SHARED IMPORTED)
-include_directories(src/main/cpp/include src/main/cpp/include/opencv src/main/cpp/include/opencv2 src/main/cpp/stasm)
+include_directories(src/main/cpp src/main/cpp/opencv src/main/cpp/opencv2 src/main/cpp/stasm)
 set_target_properties(opencv PROPERTIES IMPORTED_LOCATION  ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libopencv_java3.so)
 
 add_library(stasm SHARED ${OBJ_MOD1} ${OBJ_STASM})

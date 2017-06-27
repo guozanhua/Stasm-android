@@ -6,6 +6,9 @@
 #include <opencv2/opencv.hpp>
 #include "stasm_lib.h"
 #include "stasm/stasm_lib.h"
+#include "opencv2/core/fast_math.hpp"
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/imgcodecs/imgcodecs_c.h"
 #include <android/log.h>
 
 
@@ -13,7 +16,7 @@
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_com_example_jnitest_MainActivity_stringFromJNI(
+Java_com_example_stasm_MainActivity_stringFromJNI(
         JNIEnv *env,
         jobject /* this */) {
     std::string hello = "Hello from C++";
@@ -22,13 +25,13 @@ Java_com_example_jnitest_MainActivity_stringFromJNI(
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_jnitest_MainActivity_loadJpeg(JNIEnv *env, jobject instance, jstring root_,
-                                               jstring path_) {
+Java_com_example_stasm_MainActivity_loadJpeg(JNIEnv *env, jobject instance, jstring root_,
+                                             jstring path_) {
     const char *root = env->GetStringUTFChars(root_, 0);
     const char *path = env->GetStringUTFChars(path_, 0);
     clock_t start, finish;
-
-    cv::Mat_<unsigned char> img(cv::imread(path, CV_LOAD_IMAGE_GRAYSCALE));
+    const std::string path_str = path;
+    cv::Mat_<unsigned char> img(cv::imread(path_str, CV_LOAD_IMAGE_GRAYSCALE));
     int foundface;
     float landmarks[2 * stasm_NLANDMARKS]; // x,y coords (note the 2)
     char data[] = "/test";
@@ -62,10 +65,11 @@ Java_com_example_jnitest_MainActivity_loadJpeg(JNIEnv *env, jobject instance, js
     delete[](data_path);
     env->ReleaseStringUTFChars(root_, root);
     env->ReleaseStringUTFChars(path_, path);
-}extern "C"
+}
+extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_jnitest_MainActivity_loadMoreFaceJpeg(JNIEnv *env, jobject instance, jstring root_,
-                                                       jstring path_) {
+Java_com_example_stasm_MainActivity_loadMoreFaceJpeg(JNIEnv *env, jobject instance, jstring root_,
+                                                     jstring path_) {
     const char *root = env->GetStringUTFChars(root_, 0);
     const char *path = env->GetStringUTFChars(path_, 0);
 
@@ -101,7 +105,7 @@ Java_com_example_jnitest_MainActivity_loadMoreFaceJpeg(JNIEnv *env, jobject inst
     }
     finish = clock();
     LOGW("face number = %d", nfaces);
-    LOGW("spend = %d", (finish - start));
+    LOGW("spend = %ld", (finish - start));
     char *new_jpg_path = new char[strlen(root) + strlen(new_jpg) + 1];
     strcpy(new_jpg_path, root);
     strcat(new_jpg_path, new_jpg);
